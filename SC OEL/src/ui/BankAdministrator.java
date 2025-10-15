@@ -49,10 +49,11 @@ public class BankAdministrator {
             System.out.println("\n========== Admin Menu ==========");
             System.out.println("1. View All Customers");
             System.out.println("2. View All Accounts");
-            System.out.println("3. Create New Account");
-            System.out.println("4. Unblock Customer Account");
-            System.out.println("5. View Bank Statistics");
-            System.out.println("6. Logout");
+            System.out.println("3. Register New Customer");
+            System.out.println("4. Create New Account");
+            System.out.println("5. Unblock Customer Account");
+            System.out.println("6. View Bank Statistics");
+            System.out.println("7. Logout");
             System.out.println("================================");
             System.out.print("Select an option: ");
             
@@ -66,15 +67,18 @@ public class BankAdministrator {
                     viewAllAccounts();
                     break;
                 case "3":
-                    createNewAccount();
+                    registerNewCustomer();
                     break;
                 case "4":
-                    unblockCustomer();
+                    createNewAccount();
                     break;
                 case "5":
-                    viewBankStatistics();
+                    unblockCustomer();
                     break;
                 case "6":
+                    viewBankStatistics();
+                    break;
+                case "7":
                     logout();
                     return;
                 default:
@@ -130,6 +134,53 @@ public class BankAdministrator {
         }
         
         System.out.println("\nTotal Accounts: " + accounts.size());
+    }
+    
+    /**
+     * Registers a new customer with the bank.
+     */
+    private void registerNewCustomer() {
+        System.out.println("\n===== Register New Customer =====");
+        System.out.print("Enter Customer ID: ");
+        String customerId = scanner.nextLine().trim();
+        
+        // Check if customer already exists
+        if (bank.getCustomer(customerId) != null) {
+            System.out.println("❌ Customer with ID " + customerId + " already exists.");
+            return;
+        }
+        
+        System.out.print("Enter Customer Name: ");
+        String name = scanner.nextLine().trim();
+        
+        if (name.isEmpty()) {
+            System.out.println("❌ Customer name cannot be empty.");
+            return;
+        }
+        
+        System.out.print("Enter Initial PIN (4 digits recommended): ");
+        String pin = scanner.nextLine().trim();
+        
+        if (pin.isEmpty()) {
+            System.out.println("❌ PIN cannot be empty.");
+            return;
+        }
+        
+        try {
+            Customer newCustomer = bank.registerCustomer(customerId, name, pin);
+            
+            if (newCustomer != null) {
+                System.out.println("\n✓ Customer registered successfully!");
+                System.out.println("Customer ID: " + customerId);
+                System.out.println("Name: " + name);
+                System.out.println("\nNote: Customer can now log in to ATM with ID and PIN.");
+                System.out.println("Use 'Create New Account' option to open accounts for this customer.");
+            } else {
+                System.out.println("❌ Failed to register customer. ID may already exist.");
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Registration failed: " + e.getMessage());
+        }
     }
     
     private void createNewAccount() {
